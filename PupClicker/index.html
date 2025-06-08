@@ -44,34 +44,49 @@
   <!-- Interaction Script -->
   <script>
     (function(){
-      var dogAnim = lottie.loadAnimation({
-        container: document.getElementById('dogAnimation'), renderer: 'svg', loop: false, autoplay: true,
+      const dogAnim = lottie.loadAnimation({
+        container: document.getElementById('dogAnimation'),
+        renderer: 'svg',
+        loop: false,
+        autoplay: true,
         path: './Animation - 1749404241412.json'
       });
-      var btn = document.getElementById('actionButton');
-      var countDisplay = document.getElementById('countDisplay');
-      var treats = 0;
+
+      const btn = document.getElementById('actionButton');
+      const countDisplay = document.getElementById('countDisplay');
+
+      let treats = parseInt(localStorage.getItem('treats') || '0', 10);
+      countDisplay.textContent = 'Treats: ' + treats;
+
       btn.addEventListener('click', function(){
         treats++;
+        localStorage.setItem('treats', treats);
         countDisplay.textContent = 'Treats: ' + treats;
+
         if(treats < 10) dogAnim.playSegments([0,30], true);
         else if(treats < 25) dogAnim.playSegments([30,60], true);
         else dogAnim.playSegments([60,90], true);
-        var rect = btn.getBoundingClientRect();
-        for(var i=0;i<20;i++){
-          var t = document.createElement('img');
+
+        const rect = btn.getBoundingClientRect();
+        for(let i=0;i<20;i++){
+          const t = document.createElement('img');
           t.className = 'treat';
           t.src = './dogtrets.png';
+          t.alt = '';
           t.style.left = (rect.left + rect.width/2 - 20) + 'px';
           t.style.top = rect.top + 'px';
           document.body.appendChild(t);
-          var dx = (Math.random()-0.5)*200;
-          var dy = Math.random()*300 + 100;
-          var rot = Math.random()*360;
+
+          const dx = (Math.random()-0.5)*200;
+          const dy = Math.random()*300 + 100;
+          const rot = Math.random()*360;
+
           t.animate([
             { transform: 'translate(0,0) rotate(0deg)', opacity:1 },
-            { transform: 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg)', opacity:0 }
-          ], { duration: 1200, easing: 'ease-out' }).onfinish = function(e){ e.target.effect.target.remove(); };
+            { transform: `translate(${dx}px, ${dy}px) rotate(${rot}deg)`, opacity:0 }
+          ], { duration: 1200, easing: 'ease-out' })
+          .finished
+          .then(() => t.remove());
         }
       });
     })();
