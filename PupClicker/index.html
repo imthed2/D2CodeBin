@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PupClicker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Montserrat', sans-serif; background: #0e0f2c; overflow: hidden; position: relative; height: 100vh; color: #fff; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.7; animation: blobMove 20s infinite; }
+    .blob:nth-child(1) { width:300px;height:300px;background:radial-gradient(circle at 30% 30%,#ff6ec4,#7873f5);top:10%;left:15%;animation-duration:25s; }
+    .blob:nth-child(2) { width:400px;height:400px;background:radial-gradient(circle at 70% 70%,#42e695,#3bb2b8);top:50%;left:60%;animation-duration:30s; }
+    .blob:nth-child(3) { width:350px;height:350px;background:radial-gradient(circle at 50% 50%,#fad0c4,#ffd1ff);top:70%;left:20%;animation-duration:22s; }
+    @keyframes blobMove { 0%{transform:translate(0,0) scale(1);}25%{transform:translate(50px,-30px) scale(1.1);}50%{transform:translate(-20px,40px) scale(0.9);}75%{transform:translate(-30px,-20px) scale(1.05);}100%{transform:translate(0,0) scale(1);} }
+    .container { position: relative; z-index: 10; max-width: 600px; margin: auto; top: 20%; text-align: center; padding: 80px 40px 40px; backdrop-filter: blur(10px); background: rgba(255,255,255,0.1); border-radius: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); opacity: 0; animation: fadeIn 1.5s ease-out forwards; }
+    .container h1 { font-size: 3rem; margin-bottom: 20px; letter-spacing:2px; }
+    .container p { font-size:1.2rem; margin-bottom:10px; }
+    .counter { font-size:2rem; margin-bottom:30px; }
+    #dogAnimation { position:absolute; top:-180px; left:50%; transform:translateX(-50%); width:150px; height:150px; z-index:11; }
+    .btn { padding:15px 40px; font-size:1rem; font-weight:700; color:#0e0f2c; background:#fff; border:none; border-radius:50px; cursor:pointer; overflow:hidden; position:relative; }
+    .btn::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:rgba(255,255,255,0.2); transform:skewX(-20deg); transition:left 0.5s ease; }
+    .btn:hover::before { left:200%; }
+    @keyframes fadeIn { to { opacity:1; } }
+    @keyframes slideIn { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+    .treat { position:absolute; width:40px; height:auto; pointer-events:none; }
+  </style>
+</head>
+<body>
+  <div class="blob"></div><div class="blob"></div><div class="blob"></div>
+  <div class="container">
+    <div id="dogAnimation"></div>
+    <h1>PupClicker</h1>
+    <p>Klik, opgrader og forkæl din firbenede gourmet.</p>
+    <div class="counter" id="countDisplay">Treats: 0</div>
+    <button class="btn" id="actionButton">Give Treat</button>
+  </div>
+
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.1/lottie.min.js"></script>
+
+  <!-- Interaction Script -->
+  <script>
+    (function(){
+      var dogAnim = lottie.loadAnimation({
+        container: document.getElementById('dogAnimation'), renderer: 'svg', loop: false, autoplay: true,
+        path: './Animation - 1749404241412.json'
+      });
+      var btn = document.getElementById('actionButton');
+      var countDisplay = document.getElementById('countDisplay');
+      var treats = 0;
+      btn.addEventListener('click', function(){
+        treats++;
+        countDisplay.textContent = 'Treats: ' + treats;
+        if(treats < 10) dogAnim.playSegments([0,30], true);
+        else if(treats < 25) dogAnim.playSegments([30,60], true);
+        else dogAnim.playSegments([60,90], true);
+        var rect = btn.getBoundingClientRect();
+        for(var i=0;i<20;i++){
+          var t = document.createElement('img');
+          t.className = 'treat';
+          t.src = './dogtrets.png';
+          t.style.left = (rect.left + rect.width/2 - 20) + 'px';
+          t.style.top = rect.top + 'px';
+          document.body.appendChild(t);
+          var dx = (Math.random()-0.5)*200;
+          var dy = Math.random()*300 + 100;
+          var rot = Math.random()*360;
+          t.animate([
+            { transform: 'translate(0,0) rotate(0deg)', opacity:1 },
+            { transform: 'translate(' + dx + 'px,' + dy + 'px) rotate(' + rot + 'deg)', opacity:0 }
+          ], { duration: 1200, easing: 'ease-out' }).onfinish = function(e){ e.target.effect.target.remove(); };
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
