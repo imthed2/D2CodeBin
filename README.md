@@ -1,5 +1,5 @@
 # D2CodeBin
 
-This repository contains a simple example web page demonstrating a button with JavaScript functionality.
+D2CodeBin is a collection of small front‑end experiments. The current example is a minimal web page where pressing a button reveals a message using JavaScript.
 
-The `index.html` file includes styling from `style.css` and uses a small script to display a message when the button is clicked.
+You can try the latest build here: https://imthed2.github.io/D2CodeBin/
