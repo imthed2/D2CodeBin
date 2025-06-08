@@ -19,7 +19,7 @@
     .container h1 { font-size: 3rem; margin-bottom: 20px; letter-spacing:2px; }
     .container p { font-size:1.2rem; margin-bottom:10px; }
     .counter { font-size:2rem; margin-bottom:30px; }
-    #dogAnimation { position:absolute; top:-180px; left:50%; transform:translateX(-50%); width:150px; height:150px; z-index:11; transition:transform 0.1s ease-out; transform-origin:center; }
+    #dogAnimation { position:absolute; top:-180px; left:50%; width:150px; height:150px; z-index:11; transition:transform 0.1s ease-out; transform-origin:center; --angle:0deg; --scale:1; transform:translateX(-50%) rotate(var(--angle)) scale(var(--scale)); }
     .btn { padding:15px 40px; font-size:1rem; font-weight:700; color:#0e0f2c; background:#fff; border:none; border-radius:50px; cursor:pointer; overflow:hidden; position:relative; }
     .btn::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:rgba(255,255,255,0.2); transform:skewX(-20deg); transition:left 0.5s ease; }
     .btn:hover::before { left:200%; }
@@ -40,6 +40,7 @@
 
   <!-- Libraries -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.1/lottie.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
 
   <!-- Interaction Script -->
   <script>
@@ -58,7 +59,7 @@
         var centerX = rect.left + rect.width/2;
         var centerY = rect.top + rect.height/2;
         var angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180/Math.PI;
-        dogEl.style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
+        dogEl.style.setProperty('--angle', angle + 'deg');
       });
       btn.addEventListener('click', function(){
         treats++;
@@ -66,6 +67,8 @@
         if(treats < 10) dogAnim.playSegments([0,30], true);
         else if(treats < 25) dogAnim.playSegments([30,60], true);
         else dogAnim.playSegments([60,90], true);
+        var scale = 1 + Math.random()*0.3;
+        anime({ targets: dogEl, '--scale': scale, duration: 300, direction: 'alternate', easing: 'easeInOutSine' });
         var rect = btn.getBoundingClientRect();
         for(var i=0;i<20;i++){
           var t = document.createElement('img');
